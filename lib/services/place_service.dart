@@ -53,6 +53,17 @@ class PlaceService {
     return _map(rows);
   }
 
+  /// Places that belong to an experience [category] (e.g. 'wildlife',
+  /// 'coast'). Drives the "explore by experience" browse. Optionally scoped
+  /// to a single [country] so it can be focused on Kenya for now.
+  Future<List<Place>> placesByCategory(String category, {String? country}) async {
+    var query =
+        _client.from('places').select(_select).contains('categories', [category]);
+    if (country != null) query = query.eq('country', country);
+    final rows = await query.order('rating', ascending: false);
+    return _map(rows);
+  }
+
   /// Free-text search across name, country and tags.
   Future<List<Place>> search(String query) async {
     final q = query.trim();

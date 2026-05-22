@@ -94,12 +94,20 @@ create table if not exists public.places (
   latitude      double precision,
   longitude     double precision,
   tags          text[] not null default '{}',
+  -- experience categories a place belongs to, e.g. {wildlife,lakes-rivers}.
+  -- Drives the "explore by experience" browse (a place can be in several).
+  categories    text[] not null default '{}',
   rating        numeric(2,1) default 4.5,
   created_at    timestamptz not null default now()
 );
 
+-- For projects created before the categories column existed.
+alter table public.places
+  add column if not exists categories text[] not null default '{}';
+
 create index if not exists places_continent_idx on public.places (continent);
 create index if not exists places_best_months_idx on public.places using gin (best_months);
+create index if not exists places_categories_idx on public.places using gin (categories);
 
 alter table public.places enable row level security;
 

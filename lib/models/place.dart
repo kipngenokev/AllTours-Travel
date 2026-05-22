@@ -38,6 +38,7 @@ class Place {
   final double? latitude;
   final double? longitude;
   final List<String> tags;
+  final List<String> categories;
   final double rating;
   final List<PlaceMedia> media;
 
@@ -56,6 +57,7 @@ class Place {
     this.latitude,
     this.longitude,
     this.tags = const [],
+    this.categories = const [],
     this.rating = 4.5,
     this.media = const [],
   });
@@ -82,6 +84,7 @@ class Place {
       latitude: (m['latitude'] as num?)?.toDouble(),
       longitude: (m['longitude'] as num?)?.toDouble(),
       tags: strs(m['tags']),
+      categories: strs(m['categories']),
       rating: (m['rating'] as num?)?.toDouble() ?? 4.5,
       media: (m['place_media'] as List?)
               ?.map((e) => PlaceMedia.fromMap(e as Map<String, dynamic>))
