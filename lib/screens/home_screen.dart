@@ -8,6 +8,7 @@ import '../theme/app_theme.dart';
 import '../utils/season.dart';
 import '../widgets/place_card.dart';
 import '../widgets/ui.dart';
+import 'admin_inbox_screen.dart';
 import 'consultancy_screen.dart';
 import 'continent_screen.dart';
 import 'my_requests_screen.dart';
@@ -146,6 +147,14 @@ class _TopBar extends StatelessWidget {
           const SizedBox(width: 8),
           Text('All-Tours', style: AppTheme.display(size: 22)),
           const Spacer(),
+          if (context.watch<AuthService>().isAdmin)
+            IconButton(
+              tooltip: 'Requests inbox',
+              icon: const Icon(Icons.inbox_outlined, color: AppColors.primary),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AdminInboxScreen()),
+              ),
+            ),
           IconButton(
             tooltip: 'My requests',
             icon: const Icon(Icons.assignment_outlined, color: AppColors.muted),

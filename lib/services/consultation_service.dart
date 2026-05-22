@@ -31,4 +31,23 @@ class ConsultationService {
         .order('created_at', ascending: false);
     return rows.map(ConsultationRequest.fromMap).toList();
   }
+
+  // ---- Staff inbox (requires an admin profile + RLS admin policy) ----
+
+  /// Every request across all travellers, newest first. Returns an empty
+  /// list for non-admins (their RLS only exposes their own rows anyway).
+  Future<List<ConsultationRequest>> allRequests() async {
+    final rows = await _client
+        .from('consultation_requests')
+        .select('*')
+        .order('created_at', ascending: false);
+    return rows.map(ConsultationRequest.fromMap).toList();
+  }
+
+  /// Moves a request along its lifecycle (admin only).
+  Future<void> updateStatus(String id, RequestStatus status) async {
+    await _client
+        .from('consultation_requests')
+        .update({'status': status.wire}).eq('id', id);
+  }
 }

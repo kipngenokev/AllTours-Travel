@@ -26,8 +26,13 @@ create table if not exists public.profiles (
   full_name   text,
   avatar_url  text,
   home_country text,
+  is_admin    boolean not null default false,  -- staff who manage requests
   created_at  timestamptz not null default now()
 );
+
+-- For projects created before this column existed.
+alter table public.profiles
+  add column if not exists is_admin boolean not null default false;
 
 alter table public.profiles enable row level security;
 
@@ -57,6 +62,17 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- Is the current user a staff member? SECURITY DEFINER so it can read the
+-- is_admin flag without tripping the profiles row-level-security policy
+-- (and so admin policies on other tables don't recurse back into profiles).
+create or replace function public.is_admin()
+returns boolean language sql stable security definer set search_path = public as $$
+  select coalesce(
+    (select is_admin from public.profiles where id = auth.uid()),
+    false
+  );
+$$;
 
 -- =====================================================================
 -- places : the core catalogue of tourable destinations
@@ -172,6 +188,21 @@ create policy "users manage own requests"
   on public.consultation_requests for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+-- Staff can read every request (the in-app inbox) ...
+drop policy if exists "admins read all requests"
+  on public.consultation_requests;
+create policy "admins read all requests"
+  on public.consultation_requests for select
+  using (public.is_admin());
+
+-- ... and update any request's status.
+drop policy if exists "admins update all requests"
+  on public.consultation_requests;
+create policy "admins update all requests"
+  on public.consultation_requests for update
+  using (public.is_admin())
+  with check (public.is_admin());
 
 -- =====================================================================
 -- RPC: places_in_season(month int)
