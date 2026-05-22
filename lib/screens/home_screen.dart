@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/attraction_category.dart';
+import '../models/country.dart';
 import '../models/place.dart';
 import '../services/auth_service.dart';
 import '../services/place_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/season.dart';
+import '../widgets/country_card.dart';
 import '../widgets/place_card.dart';
 import '../widgets/ui.dart';
 import 'admin_inbox_screen.dart';
 import 'consultancy_screen.dart';
 import 'continent_screen.dart';
-import 'explore_kenya_screen.dart';
+import 'country_detail_screen.dart';
+import 'explore_africa_screen.dart';
 import 'my_requests_screen.dart';
 import 'place_detail_screen.dart';
 import 'places_list_screen.dart';
@@ -83,26 +85,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 28),
-              // ---- Explore Kenya by experience ----
+              // ---- Discover Africa: country rail ----
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SectionHeader(
-                  eyebrow: 'Africa · Kenya',
-                  title: 'Explore by experience',
+                  eyebrow: 'Plan your trip',
+                  title: 'Discover Africa',
                   trailing: ArrowLink(
                     label: 'All',
                     onTap: () =>
-                        _open(ExploreKenyaScreen(service: _service)),
+                        _open(ExploreAfricaScreen(service: _service)),
                   ),
                 ),
               ),
               const SizedBox(height: 14),
-              _KenyaCategoryRow(
-                onSelect: (cat) => _open(PlacesListScreen(
-                  title: cat.label,
-                  eyebrow: 'Kenya',
-                  future:
-                      _service.placesByCategory(cat.id, country: 'Kenya'),
+              _CountryRail(
+                onSelect: (country) => _open(CountryDetailScreen(
+                  country: country,
+                  service: _service,
                 )),
               ),
               const SizedBox(height: 28),
@@ -350,59 +350,28 @@ class _SeasonalCarousel extends StatelessWidget {
   }
 }
 
-/// Horizontal row of Kenya experience-category buttons.
-class _KenyaCategoryRow extends StatelessWidget {
-  final ValueChanged<AttractionCategory> onSelect;
-  const _KenyaCategoryRow({required this.onSelect});
+/// Horizontal rail of editorial country cards for the Africa explorer.
+class _CountryRail extends StatelessWidget {
+  final ValueChanged<Country> onSelect;
+  const _CountryRail({required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
-    final cats = AttractionCategory.all;
+    final countries = Country.all;
     return SizedBox(
-      height: 150,
+      height: 230,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemCount: cats.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 12),
-        itemBuilder: (_, i) {
-          final cat = cats[i];
-          return InkWell(
-            onTap: () => onSelect(cat),
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              width: 150,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.line),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(11),
-                    ),
-                    child: Icon(cat.icon, color: AppColors.primary, size: 22),
-                  ),
-                  const Spacer(),
-                  Text(cat.label,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13.5,
-                          height: 1.2)),
-                ],
-              ),
-            ),
-          );
-        },
+        itemCount: countries.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 14),
+        itemBuilder: (_, i) => SizedBox(
+          width: 180,
+          child: CountryCard(
+            country: countries[i],
+            onTap: () => onSelect(countries[i]),
+          ),
+        ),
       ),
     );
   }

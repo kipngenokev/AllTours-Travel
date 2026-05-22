@@ -25,7 +25,7 @@ with seeded as (
    'The Mara''s rolling savannah teems with lions, elephants, cheetahs and, from July to October, the wildebeest migration crossing the Mara River. Maasai communities border and co-manage much of the ecosystem.',
    'Book a licensed operator or reputable camp. July–October is peak migration — reserve early. Keep a safe distance from wildlife and follow your guide. Conservancy fees support local Maasai.',
    '{7,8,9,10,1,2}', 'https://picsum.photos/seed/maasaimara/1200/800',
-   -1.5061, 35.1432, '{safari,migration,bigfive}', '{wildlife,culture}', 4.9),
+   -1.5061, 35.1432, '{safari,migration,bigfive}', '{wildlife,migration,culture}', 4.9),
 
   ('Amboseli National Park', 'Kenya', 'Africa', 'S',
    'Great elephant herds beneath Mount Kilimanjaro.',
@@ -184,7 +184,7 @@ with seeded as (
    'The Mara River cuts through the reserve where, from July to October, vast herds of wildebeest brave crocodile-filled waters in the migration''s most heart-stopping spectacle.',
    'Crossings are unpredictable — patience and a good guide are key. Keep quiet and still at crossing points. Peak window is August–September.',
    '{7,8,9,10}', 'https://picsum.photos/seed/marariver/1200/800',
-   -1.4000, 35.0500, '{migration,crocodiles,river}', '{lakes-rivers,wildlife}', 4.8),
+   -1.4000, 35.0500, '{migration,crocodiles,river}', '{lakes-rivers,wildlife,migration}', 4.8),
 
   -- ---------------- MOUNTAINS & LANDSCAPES ----------------
   ('Mount Kenya', 'Kenya', 'Africa', 'N',
